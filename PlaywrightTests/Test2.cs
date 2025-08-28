@@ -365,7 +365,7 @@ namespace PlaywrightTests
                 // Wait for the Forename input field to appear (Edit Person screen loaded)
                 await _page.WaitForSelectorAsync("input[name='Forename']");
 
-                // Change Forename to 'William' and Year of Birth to '1985'
+                // Change Forename to 'William T.' and Year of Birth to '1990'
                 var forenameInputEdit = await _page.QuerySelectorAsync("input[name='Forename']");
                 // Try all likely selectors for Forename
                                 string[] forenameSelectors = {
@@ -377,22 +377,20 @@ namespace PlaywrightTests
                                 foreach (var selector in forenameSelectors)
                                 {
                                     forenameInputEditTry = await _page.QuerySelectorAsync(selector);
-                                    if (forenameInputEditTry != null) { System.Diagnostics.Debug.WriteLine($"Found Forename input with selector: {selector}"); break; }
+                                    if (forenameInputEditTry != null) { break; }
                                 }
                                 Assert.IsNotNull(forenameInputEditTry, "Forename input not found on Edit screen.");
                                 // Clear, type, and blur for Forename
-                                await forenameInputEditTry.FocusAsync();
+                                await forenameInputEditTry!.FocusAsync();
                                 await forenameInputEditTry.PressAsync("Control+A");
                                 await forenameInputEditTry.PressAsync("Backspace");
-                                await forenameInputEditTry.TypeAsync("William T.");
+                                var beforeFillValue = await forenameInputEditTry.InputValueAsync();
+                                await forenameInputEditTry!.FillAsync("William T.");
                                 await forenameInputEditTry.DispatchEventAsync("input");
                                 await forenameInputEditTry.DispatchEventAsync("change");
                                 await forenameInputEditTry.EvaluateAsync("el => el.blur()");
-                                var forenameValueEditDebug = await forenameInputEditTry.InputValueAsync();
-                                System.Diagnostics.Debug.WriteLine($"Forename value after TypeAsync+blur: {forenameValueEditDebug}");
-                // Confirm value was set
-                var forenameValueEdit = await forenameInputEdit.InputValueAsync();
-                System.Diagnostics.Debug.WriteLine($"Forename value after fill (edit): {forenameValueEdit}");
+                                // Confirm value was set
+                                var forenameValueEdit = await forenameInputEdit!.InputValueAsync();
 
                 var yobInputEdit = await _page.QuerySelectorAsync("input[name='YearOfBirth'], input[name='Year of Birth']");
                 // Try all likely selectors for Year of Birth
@@ -407,18 +405,16 @@ namespace PlaywrightTests
                                 foreach (var selector in yobSelectors)
                                 {
                                     yobInputEditTry = await _page.QuerySelectorAsync(selector);
-                                    if (yobInputEditTry != null) { System.Diagnostics.Debug.WriteLine($"Found Year of Birth input with selector: {selector}"); break; }
+                                    if (yobInputEditTry != null) { break; }
                                 }
                                 Assert.IsNotNull(yobInputEditTry, "Year of Birth input not found on Edit screen.");
-                                await yobInputEditTry.FocusAsync();
+                                await yobInputEditTry!.FocusAsync();
                                 await yobInputEditTry.PressAsync("Control+A");
                                 await yobInputEditTry.PressAsync("Backspace");
-                                await yobInputEditTry.TypeAsync("1990");
+                                await yobInputEditTry!.FillAsync("1990");
                                 await yobInputEditTry.DispatchEventAsync("input");
                                 await yobInputEditTry.DispatchEventAsync("change");
                                 await yobInputEditTry.EvaluateAsync("el => el.blur()");
-                                var yobValueEditDebug = await yobInputEditTry.InputValueAsync();
-                                System.Diagnostics.Debug.WriteLine($"Year of Birth value after TypeAsync+blur: {yobValueEditDebug}");
 
                                 // Wait briefly to mimic real user pacing
                                 await _page.WaitForTimeoutAsync(500);
@@ -427,7 +423,6 @@ namespace PlaywrightTests
                                 var saveBtnEdit = await _page.QuerySelectorAsync("button:has-text('Save Changes'), input[type=submit][value='Save Changes']");
                                 Assert.IsNotNull(saveBtnEdit, "Save Changes button not found on Edit screen.");
                                 var isSaveEnabled = await saveBtnEdit.IsEnabledAsync();
-                                System.Diagnostics.Debug.WriteLine($"Save Changes button enabled: {isSaveEnabled}");
                                 if (isSaveEnabled)
                                 {
                                     await saveBtnEdit.ClickAsync();
@@ -440,18 +435,15 @@ namespace PlaywrightTests
                                 // --- Debug: Log network requests and responses during save ---
                                 void LogRequest(object? sender, Microsoft.Playwright.IRequest e)
                                 {
-                                    System.Diagnostics.Debug.WriteLine($"Request: {e.Method} {e.Url}");
                                 }
                                 void LogResponse(object? sender, Microsoft.Playwright.IResponse e)
                                 {
-                                    System.Diagnostics.Debug.WriteLine($"Response: {e.Status} {e.Url}");
                                 }
                                 _page.Request += LogRequest;
                                 _page.Response += LogResponse;
 
                                 // Log cookies before save
                                 var cookiesBefore = await _page.Context.CookiesAsync();
-                                System.Diagnostics.Debug.WriteLine($"Cookies before save: {string.Join(", ", cookiesBefore.Select(c => c.Name + "=" + c.Value))}");
 
                                 // Wait for the grid to reload after navigation
                                 await _page.WaitForSelectorAsync("text=Database Records");
@@ -465,7 +457,6 @@ namespace PlaywrightTests
                 foreach (var err in errorMessagesEditSave)
                 {
                     var errText = (await err.InnerTextAsync()).Trim();
-                    System.Diagnostics.Debug.WriteLine($"Validation/Error message after save (edit): {errText}");
                 }
 
                 // Wait for possible validation or success message
@@ -475,7 +466,6 @@ namespace PlaywrightTests
                 foreach (var err in errorMessagesEdit)
                 {
                     var errText = (await err.InnerTextAsync()).Trim();
-                    System.Diagnostics.Debug.WriteLine($"Validation/Error message after save (edit): {errText}");
                 }
 
                 // Wait for View People screen to reload
@@ -486,7 +476,6 @@ namespace PlaywrightTests
 
                 // Log cookies after save
                 var cookiesAfter = await _page.Context.CookiesAsync();
-                System.Diagnostics.Debug.WriteLine($"Cookies after save: {string.Join(", ", cookiesAfter.Select(c => c.Name + "=" + c.Value))}");
 
                 // Remove event handlers to avoid duplicate logs in future tests
                 _page.Request -= LogRequest;
@@ -494,7 +483,6 @@ namespace PlaywrightTests
 
                 // Debug: Output the current URL after navigation
                 var currentUrl = _page.Url;
-                System.Diagnostics.Debug.WriteLine($"URL after save: {currentUrl}");
 
                 // Assert the main grid title after saving
                 var mainGridTitle = await _page.TitleAsync();
@@ -564,7 +552,12 @@ namespace PlaywrightTests
                 await _page.WaitForSelectorAsync("input[name='Forename']");
 
                 // Change Forename back to 'William' and Year of Birth to '1985'
-                var forenameInputRevert = await _page.QuerySelectorAsync("input[name='Forename']");
+                var forenameInputRevert = await _page.QuerySelectorAsync("input[name='Forename'], input#Forename, input[aria-label='Forename']");
+                if (forenameInputRevert == null)
+                {
+                    var pageTitle = await _page.TitleAsync();
+                    var html = await _page.ContentAsync();
+                }
                 Assert.IsNotNull(forenameInputRevert, "Forename input not found on Edit screen (revert).");
                 await forenameInputRevert.FillAsync("William");
 
@@ -600,95 +593,254 @@ namespace PlaywrightTests
                     }
                 }
                 Assert.IsTrue(foundRevertedFinal, "Reverted record (William Smith, Male, 1985) not found in grid after revert.");
-                // Wait for the title to change to the expected edit page title (timeout 10s)
-                string editTitle = oldTitle;
-                for (int i = 0; i < 100; i++) // 100 x 100ms = 10s
+
+                // --- DELETE: Find and delete the record ---
+                IElementHandle? deleteButton = null;
+                foreach (var row in revertedRowsFinal)
                 {
-                    editTitle = await _page.TitleAsync();
-                    if (editTitle != oldTitle && editTitle.Contains("Edit Person - First Project"))
-                        break;
-                    await _page.WaitForTimeoutAsync(100);
-                }
-
-            // Assert that the fields are present and populated with the selected record's values
-            // Forename
-            var forenameInput = await _page.QuerySelectorAsync("input[name='Forename'], input#Forename, input[aria-label='Forename']");
-            Assert.IsNotNull(forenameInput, "Forename input field not found on Edit Person screen.");
-            var forenameValue = await forenameInput.GetAttributeAsync("value");
-            Assert.AreEqual("William", forenameValue, "Forename field is not populated with 'William'.");
-
-            // Family Name
-            var familyNameInput = await _page.QuerySelectorAsync("input[name='FamilyName'], input#FamilyName, input[aria-label='Family Name'], input[aria-label='FamilyName']");
-            Assert.IsNotNull(familyNameInput, "Family Name input field not found on Edit Person screen.");
-            var familyNameValue = await familyNameInput.GetAttributeAsync("value");
-            Assert.AreEqual("Smith", familyNameValue, "Family Name field is not populated with 'Smith'.");
-
-            // Gender
-            // Try <select> first
-            var genderSelect = await _page.QuerySelectorAsync("select[name='Gender'], select#Gender, select[aria-label='Gender']");
-            string? genderValue = null;
-            if (genderSelect != null)
-            {
-                var selectedOption = await genderSelect.QuerySelectorAsync("option:checked");
-                if (selectedOption != null)
-                    genderValue = (await selectedOption.InnerTextAsync()).Trim();
-            }
-            else
-            {
-                // Try radio buttons
-                var genderRadio = await _page.QuerySelectorAsync("input[type='radio'][name='Gender']:checked, input[type='radio'][id='Gender']:checked");
-                if (genderRadio != null)
-                {
-                    genderValue = await genderRadio.GetAttributeAsync("value");
-                }
-            }
-            Assert.AreEqual("Male", genderValue, $"Gender field is not populated with 'Male'. Actual: '{genderValue}'");
-
-            // Year of Birth
-            var yobInput = await _page.QuerySelectorAsync("input[name='YearOfBirth'], input#YearOfBirth, input[aria-label='Year of Birth'], input[aria-label='YearOfBirth']");
-            Assert.IsNotNull(yobInput, "Year of Birth input field not found on Edit Person screen.");
-            var yobValue = await yobInput.GetAttributeAsync("value");
-            Assert.AreEqual("1985", yobValue, "Year of Birth field is not populated with '1985'.");
-
-            // Edit Forename: append ' T.'
-            await forenameInput.FillAsync("William T.");
-
-            // Edit Year of Birth: change to '1990'
-            await yobInput.FillAsync("1990");
-
-            // Assert Save Changes and Back to List buttons are present
-            var saveBtn = await _page.QuerySelectorAsync("button:has-text('Save Changes'), input[type='submit'][value='Save Changes']");
-            Assert.IsNotNull(saveBtn, "'Save Changes' button not found on Edit Person screen.");
-            var backBtn = await _page.QuerySelectorAsync("button:has-text('Back to List'), a:has-text('Back to List'), input[type='button'][value='Back to List']");
-            Assert.IsNotNull(backBtn, "'Back to List' button not found on Edit Person screen.");
-
-            // Click Save Changes after editing fields
-            await saveBtn.ClickAsync();
-
-            // Wait for View People screen to load (wait for the visible 'Database Records' title)
-            await _page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
-            await _page.WaitForSelectorAsync("text=Database Records");
-
-            // Assert the updated record is present in the grid
-            var updatedRows = await _page.QuerySelectorAllAsync("tbody tr");
-            bool foundUpdated = false;
-            foreach (var row in updatedRows)
-            {
-                var cells = await row.QuerySelectorAllAsync("td");
-                if (cells.Count >= 5)
-                {
-                    var forename = (await cells[1].InnerTextAsync()).Trim();
-                    var familyName = (await cells[2].InnerTextAsync()).Trim();
-                    var gender = (await cells[3].InnerTextAsync()).Trim();
-                    var yob = (await cells[4].InnerTextAsync()).Trim();
-                    if (forename == "William T." && familyName == "Smith" && gender == "Male" && yob == "1990")
+                    var cells = await row.QuerySelectorAllAsync("td");
+                    if (cells.Count >= 5)
                     {
-                        foundUpdated = true;
-                        break;
+                        var forename = (await cells[1].InnerTextAsync()).Trim();
+                        var familyName = (await cells[2].InnerTextAsync()).Trim();
+                        var gender = (await cells[3].InnerTextAsync()).Trim();
+                        if (forename == "William" && familyName == "Smith" && gender == "Male")
+                        {
+                            deleteButton = await row.QuerySelectorAsync("a:has-text('Delete'), button:has-text('Delete')");
+                            if (deleteButton != null)
+                            {
+                                await deleteButton.ScrollIntoViewIfNeededAsync();
+                                break;
+                            }
+                        }
                     }
                 }
-            }
-            Assert.IsTrue(foundUpdated, "Updated record (William T., Smith, Male, 1990) not found in grid after saving changes.");
+                Assert.IsNotNull(deleteButton, "Could not find Delete button for William Smith, Male.");
+                await deleteButton.ClickAsync();
+
+                // Debug: Output page HTML after clicking Delete
+                var htmlAfterDeleteClick = await _page.ContentAsync();
+
+                // Wait for Delete Confirmation screen to load (wait for heading or confirmation text)
+                // Playwright does not support multiple selectors separated by a comma; wait for both sequentially
+                await _page.WaitForSelectorAsync("h3:has-text('Delete Confirmation')");
+                await _page.WaitForSelectorAsync("text=Are you sure you want to delete this person?");
+
+                // Assert the displayed Forename, Family Name, and Gender match the selected record
+                // Try to get values from readonly inputs, spans, or labels
+                string? confirmForename = null, confirmFamilyName = null, confirmGender = null;
+                // Forename
+                var forenameElem = await _page.QuerySelectorAsync("input[name='Forename'][readonly], span#Forename, span[aria-label='Forename'], label:has-text('Forename') + span, td:has-text('Forename') + td, [data-test-forename], .forename, .person-forename, .field-forename, .delete-forename");
+                if (forenameElem != null)
+                {
+                    var tag = await forenameElem.EvaluateAsync<string>("el => el.tagName.toLowerCase()");
+                    if (tag == "input")
+                        confirmForename = await forenameElem.InputValueAsync();
+                    else
+                        confirmForename = (await forenameElem.InnerTextAsync()).Trim();
+                }
+                if (string.IsNullOrEmpty(confirmForename))
+                {
+                    // Try any input with Forename in name or id
+                    var input = await _page.QuerySelectorAsync("input[name*='Forename' i], input[id*='Forename' i]");
+                    if (input != null)
+                        confirmForename = await input.InputValueAsync();
+                }
+                if (string.IsNullOrEmpty(confirmForename))
+                {
+                    // Try to find visible text near 'Forename' label
+                    var label = await _page.QuerySelectorAsync("label:has-text('Forename')");
+                    if (label != null)
+                    {
+                        var sibling = await label.EvaluateHandleAsync("el => el.nextElementSibling");
+                        if (sibling != null)
+                        {
+                            var siblingText = await sibling.EvaluateAsync<string>("el => el.innerText");
+                            if (!string.IsNullOrWhiteSpace(siblingText))
+                                confirmForename = siblingText.Trim();
+                        }
+                    }
+                }
+                if (string.IsNullOrEmpty(confirmForename))
+                {
+                    // Fallback: try to find any visible text 'William' on the page
+                    var textElem = await _page.QuerySelectorAsync(":text('William')");
+                    if (textElem != null)
+                        confirmForename = (await textElem.InnerTextAsync()).Trim();
+                }
+                // Family Name
+                var familyNameElem = await _page.QuerySelectorAsync("input[name='FamilyName'][readonly], span#FamilyName, span[aria-label='Family Name'], label:has-text('Family Name') + span, td:has-text('Family Name') + td, [data-test-familyname], .familyname, .person-familyname, .field-familyname, .delete-familyname");
+                if (familyNameElem != null)
+                {
+                    var tag = await familyNameElem.EvaluateAsync<string>("el => el.tagName.toLowerCase()");
+                    if (tag == "input")
+                        confirmFamilyName = await familyNameElem.InputValueAsync();
+                    else
+                        confirmFamilyName = (await familyNameElem.InnerTextAsync()).Trim();
+                }
+                if (string.IsNullOrEmpty(confirmFamilyName))
+                {
+                    // Try any input with FamilyName in name or id
+                    var input = await _page.QuerySelectorAsync("input[name*='FamilyName' i], input[id*='FamilyName' i]");
+                    if (input != null)
+                        confirmFamilyName = await input.InputValueAsync();
+                }
+                if (string.IsNullOrEmpty(confirmFamilyName))
+                {
+                    // Try to find visible text near 'Family Name' label
+                    var label = await _page.QuerySelectorAsync("label:has-text('Family Name')");
+                    if (label != null)
+                    {
+                        var sibling = await label.EvaluateHandleAsync("el => el.nextElementSibling");
+                        if (sibling != null)
+                        {
+                            var siblingText = await sibling.EvaluateAsync<string>("el => el.innerText");
+                            if (!string.IsNullOrWhiteSpace(siblingText))
+                                confirmFamilyName = siblingText.Trim();
+                        }
+                    }
+                }
+                if (string.IsNullOrEmpty(confirmFamilyName))
+                {
+                    // Fallback: try to find any visible text 'Smith' on the page
+                    var textElem = await _page.QuerySelectorAsync(":text('Smith')");
+                    if (textElem != null)
+                        confirmFamilyName = (await textElem.InnerTextAsync()).Trim();
+                }
+                // Gender
+                var genderElem = await _page.QuerySelectorAsync("input[name='Gender'][readonly], span#Gender, span[aria-label='Gender'], label:has-text('Gender') + span, td:has-text('Gender') + td, [data-test-gender], .gender, .person-gender, .field-gender, .delete-gender");
+                if (genderElem != null)
+                {
+                    var tag = await genderElem.EvaluateAsync<string>("el => el.tagName.toLowerCase()");
+                    if (tag == "input")
+                        confirmGender = await genderElem.InputValueAsync();
+                    else
+                        confirmGender = (await genderElem.InnerTextAsync()).Trim();
+                }
+                if (string.IsNullOrEmpty(confirmGender))
+                {
+                    // Try any input with Gender in name or id
+                    var input = await _page.QuerySelectorAsync("input[name*='Gender' i], input[id*='Gender' i]");
+                    if (input != null)
+                        confirmGender = await input.InputValueAsync();
+                }
+                if (string.IsNullOrEmpty(confirmGender))
+                {
+                    // Try to find visible text near 'Gender' label
+                    var label = await _page.QuerySelectorAsync("label:has-text('Gender')");
+                    if (label != null)
+                    {
+                        var sibling = await label.EvaluateHandleAsync("el => el.nextElementSibling");
+                        if (sibling != null)
+                        {
+                            var siblingText = await sibling.EvaluateAsync<string>("el => el.innerText");
+                            if (!string.IsNullOrWhiteSpace(siblingText))
+                                confirmGender = siblingText.Trim();
+                        }
+                    }
+                }
+                if (string.IsNullOrEmpty(confirmGender))
+                {
+                    // Fallback: try to find any visible text 'Male' on the page
+                    var textElem = await _page.QuerySelectorAsync(":text('Male')");
+                    if (textElem != null)
+                        confirmGender = (await textElem.InnerTextAsync()).Trim();
+                }
+
+                Assert.AreEqual("William", confirmForename, "Delete confirmation Forename does not match.");
+                Assert.AreEqual("Smith", confirmFamilyName, "Delete confirmation Family Name does not match.");
+                Assert.AreEqual("Male", confirmGender, "Delete confirmation Gender does not match.");
+
+                // Click the 'Back to List' button
+                var backToListBtn = await _page.QuerySelectorAsync("button:has-text('Back to List'), a:has-text('Back to List'), input[type=button][value='Back to List']");
+                Assert.IsNotNull(backToListBtn, "'Back to List' button not found on Delete Confirmation screen.");
+                await backToListBtn.ClickAsync();
+
+                // Assert that the user is back on the main data grid page
+                await _page.WaitForSelectorAsync("text=Database Records");
+                var gridTitle = await _page.TitleAsync();
+                StringAssert.Contains(gridTitle, "View People - First Project", "Did not return to main data grid page after clicking 'Back to List'.");
+
+                // --- DELETE CONFIRM: Reselect William Smith, click Delete, and confirm deletion ---
+                // Find the William Smith, Male, 1985 record again
+                var rowsAfterBack = await _page.QuerySelectorAllAsync("tbody tr");
+                IElementHandle? deleteButtonFinal = null;
+                foreach (var row in rowsAfterBack)
+                {
+                    var cells = await row.QuerySelectorAllAsync("td");
+                    if (cells.Count >= 5)
+                    {
+                        var forename = (await cells[1].InnerTextAsync()).Trim();
+                        var familyName = (await cells[2].InnerTextAsync()).Trim();
+                        var gender = (await cells[3].InnerTextAsync()).Trim();
+                        var yob = (await cells[4].InnerTextAsync()).Trim();
+                        if (forename == "William" && familyName == "Smith" && gender == "Male" && yob == "1985")
+                        {
+                            deleteButtonFinal = await row.QuerySelectorAsync("a:has-text('Delete'), button:has-text('Delete')");
+                            if (deleteButtonFinal != null)
+                            {
+                                await deleteButtonFinal.ScrollIntoViewIfNeededAsync();
+                                break;
+                            }
+                        }
+                    }
+                }
+                Assert.IsNotNull(deleteButtonFinal, "Could not find Delete button for William Smith, Male, 1985 (final delete).");
+                await deleteButtonFinal.ClickAsync();
+
+                // Wait for Delete Confirmation screen to load
+                await _page.WaitForSelectorAsync("h3:has-text('Delete Confirmation')");
+                await _page.WaitForSelectorAsync("text=Are you sure you want to delete this person?");
+
+                // Click the Confirm Delete button (try common selectors)
+                var confirmDeleteBtn = await _page.QuerySelectorAsync("button:has-text('Delete'), input[type=submit][value='Delete'], button:has-text('Confirm'), input[type=submit][value='Confirm']");
+                Assert.IsNotNull(confirmDeleteBtn, "Confirm Delete button not found on Delete Confirmation screen.");
+                await confirmDeleteBtn.ClickAsync();
+
+                // Wait for return to main grid
+                await _page.WaitForSelectorAsync("text=Database Records");
+                var gridTitleAfterDelete = await _page.TitleAsync();
+                StringAssert.Contains(gridTitleAfterDelete, "View People - First Project", "Did not return to main data grid page after confirming delete.");
+
+                // Assert the record is no longer present in the grid
+                var rowsAfterDelete = await _page.QuerySelectorAllAsync("tbody tr");
+                bool foundDeleted = false;
+                foreach (var row in rowsAfterDelete)
+                {
+                    var cells = await row.QuerySelectorAllAsync("td");
+                    if (cells.Count >= 5)
+                    {
+                        var forename = (await cells[1].InnerTextAsync()).Trim();
+                        var familyName = (await cells[2].InnerTextAsync()).Trim();
+                        var gender = (await cells[3].InnerTextAsync()).Trim();
+                        var yob = (await cells[4].InnerTextAsync()).Trim();
+                        if (forename == "William" && familyName == "Smith" && gender == "Male" && yob == "1985")
+                        {
+                            foundDeleted = true;
+                            break;
+                        }
+                    }
+                }
+                Assert.IsFalse(foundDeleted, "Record (William Smith, Male, 1985) was not deleted from the grid.");
+
+                // --- LOGOUT ---
+                // Click the user dropdown (davred)
+                var userDropdownMenu = await _page.QuerySelectorAsync(":text('davred')");
+                Assert.IsNotNull(userDropdownMenu, "User dropdown labeled with username 'davred' not found");
+                await userDropdownMenu.ClickAsync();
+
+                // Click the Logout option (case-insensitive, robust selector)
+                var logoutButton = await _page.QuerySelectorAsync("text=/logout/i");
+                Assert.IsNotNull(logoutButton, "Logout button not found in user dropdown");
+                await logoutButton.ClickAsync();
+
+                // Wait for the login screen to render (look for Username field or login button)
+                var usernameInput = await _page.WaitForSelectorAsync("input[name='Username'], input#Username", new PageWaitForSelectorOptions { Timeout = 10000 });
+                Assert.IsNotNull(usernameInput, "Username input was not rendered after logout");
+
+                // Optionally, check for a login button or heading
+                var loginButton = await _page.QuerySelectorAsync("button[type='submit'], button:has-text('Login')");
+                Assert.IsNotNull(loginButton, "Login button was not rendered after logout");
         }
     }
 }
