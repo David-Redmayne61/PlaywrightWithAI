@@ -11,7 +11,13 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
     <PackageReference Include="Microsoft.Playwright.MSTest" Version="1.54.0" />
     <PackageReference Include="MSTest" Version="3.6.4" />
-  <PackageReference Include="ExtentReports" Version="5.0.5-beta1" />
+    <PackageReference Include="ExtentReports" Version="5.0.5-beta1" />
+    <!-- Additional test loggers for better reporting -->
+    <PackageReference Include="Microsoft.TestPlatform.ObjectModel" Version="17.12.0" />
+    <!-- SpecFlow packages for BDD support -->
+    <PackageReference Include="SpecFlow.Plus.LivingDocPlugin" Version="3.9.57" />
+    <PackageReference Include="SpecFlow.MsTest" Version="3.9.74" />
+    <PackageReference Include="SpecFlow.Tools.MsBuild.Generation" Version="3.9.74" />
   </ItemGroup>
 
   <ItemGroup>

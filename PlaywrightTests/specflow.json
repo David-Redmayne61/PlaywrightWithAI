@@ -1,0 +1,16 @@
+{
+  "specFlow": {
+    "trace": {
+      "traceSuccessfulSteps": true,
+      "traceTimings": true,
+      "minTracedDuration": "0:0:0.1",
+      "stepDefinitionSkeletonStyle": "RegexAttribute"
+    },
+    "bindingCulture": {
+      "name": "en-US"
+    },
+    "runtime": {
+      "missingOrPendingStepsOutcome": "Pending"
+    }
+  }
+}

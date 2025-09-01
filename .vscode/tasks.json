@@ -1,0 +1,122 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Run Playwright Tests",
+            "type": "shell",
+            "command": ".\\Scripts\\run-tests-with-reports.ps1",
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": [],
+            "detail": "Run Playwright tests with HTML and TRX reporting"
+        },
+        {
+            "label": "Run Playwright Tests (No Auto-Open)",
+            "type": "shell",
+            "command": ".\\Scripts\\run-tests-with-reports.ps1",
+            "args": ["-NoOpen"],
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": [],
+            "detail": "Run Playwright tests without automatically opening the report"
+        },
+        {
+            "label": "Open Latest Test Report",
+            "type": "shell",
+            "command": ".\\Scripts\\open-latest-report.ps1",
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": [],
+            "detail": "Open the most recent Playwright test report"
+        },
+        {
+            "label": "Run BDD Tests Only",
+            "type": "shell",
+            "command": ".\\Scripts\\run-bdd-tests.ps1",
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": [],
+            "detail": "Run only the BDD/SpecFlow tests (Gherkin scenarios)"
+        },
+        {
+            "label": "Run Traditional Tests Only",
+            "type": "shell",
+            "command": ".\\Scripts\\run-tests-with-reports.ps1",
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": [],
+            "detail": "Run only the traditional C# tests (Test1.cs, Test2.cs, Test3.cs)"
+        },
+        {
+            "label": "Run All Tests Sequential (Traditional → BDD)",
+            "type": "shell",
+            "command": ".\\Scripts\\run-all-tests-sequential.ps1",
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": [],
+            "detail": "Run traditional C# tests first, then BDD tests with separate reports"
+        },
+        {
+            "label": "Run All Tests (BDD + Traditional)",
+            "type": "shell",
+            "command": ".\\Scripts\\run-bdd-tests.ps1",
+            "args": ["-AllTests"],
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": [],
+            "detail": "Run all tests: both BDD and traditional approaches in one report"
+        }
+    ]
+}
