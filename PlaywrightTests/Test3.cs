@@ -57,13 +57,13 @@ namespace PlaywrightTests
             };
             foreach (var rec in records)
             {
-                await _page.FillAsync("input[name='Forename'], input#Forename", rec.Forename);
-                await _page.FillAsync("input[name='FamilyName'], input#FamilyName", rec.FamilyName);
-                await _page.SelectOptionAsync("select[name='Gender'], select#Gender", new[] { rec.Gender });
-                await _page.FillAsync("input[name='YearOfBirth'], input#YearOfBirth", rec.YearOfBirth);
-                await _page.Locator("button[type='submit']:visible, button:has-text('SUBMIT'):visible").First.ClickAsync();
+                await _page!.FillAsync("input[name='Forename'], input#Forename", rec.Forename);
+                await _page!.FillAsync("input[name='FamilyName'], input#FamilyName", rec.FamilyName);
+                await _page!.SelectOptionAsync("select[name='Gender'], select#Gender", new[] { rec.Gender });
+                await _page!.FillAsync("input[name='YearOfBirth'], input#YearOfBirth", rec.YearOfBirth);
+                await _page!.Locator("button[type='submit']:visible, button:has-text('SUBMIT'):visible").First.ClickAsync();
                 // Wait for success message
-                var successMessage = await _page.WaitForSelectorAsync("text=/record added successfully/i");
+                var successMessage = await _page!.WaitForSelectorAsync("text=/record added successfully/i");
                 Assert.IsNotNull(successMessage, $"Success message not rendered for {rec.Forename} {rec.FamilyName}");
                 // Optionally, wait a moment before next entry
                 await Task.Delay(500);

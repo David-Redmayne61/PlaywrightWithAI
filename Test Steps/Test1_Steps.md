@@ -17,8 +17,5 @@
 15. Assert that a dropdown exists labeled with the current username (davred).
 16. Click the user dropdown (davred).
 17. Click the Logout option.
-18. Assert that the login screen is rendered (Username field and Login button).
-
----
-
+18.
 For all future test files, a similar step-by-step .md file will be generated and stored in the project root.
