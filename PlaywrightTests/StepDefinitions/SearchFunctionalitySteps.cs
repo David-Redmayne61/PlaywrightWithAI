@@ -361,5 +361,158 @@ namespace PlaywrightTests.StepDefinitions
             
             Console.WriteLine($"✅ Verified {actualCount} records all have Gender = {expectedGender}");
         }
+
+        [When(@"I enter ""(.*)"" into the Family Name field")]
+        public async Task WhenIEnterIntoTheFamilyNameField(string familyName)
+        {
+            // Find the family name input field and enter the wildcard pattern
+            var familyNameInput = await _page.QuerySelectorAsync("input[name*='family'], input[name*='Family'], input[id*='family'], input[id*='Family']");
+            
+            if (familyNameInput == null)
+            {
+                throw new Exception("Could not find Family Name input field");
+            }
+            
+            await familyNameInput.FillAsync(familyName);
+            Console.WriteLine($"✅ Entered '{familyName}' in Family Name field");
+        }
+
+        [When(@"I click Search")]
+        public async Task WhenIClickSearch()
+        {
+            // Click the search button
+            await _page.ClickAsync("button:has-text('Search'), input[type='submit'][value*='Search']");
+            Console.WriteLine("✅ Clicked Search button");
+            
+            // Wait for results to load
+            await _page.WaitForTimeoutAsync(2000);
+        }
+
+        [Then(@"I should see (.*) records whose family name starts with ""(.*)""")]
+        public async Task ThenIShouldSeeRecordsWhoseFamilyNameStartsWith(int expectedCount, string expectedPrefix)
+        {
+            // Wait for results table to be visible
+            await _page.WaitForSelectorAsync("table, .results, .search-results", new PageWaitForSelectorOptions { Timeout = 10000 });
+            
+            // Get all result rows (excluding header)
+            var resultRows = await _page.QuerySelectorAllAsync("table tbody tr, .result-row, .search-result");
+            int actualCount = resultRows.Count;
+            
+            Assert.AreEqual(expectedCount, actualCount, 
+                $"Expected {expectedCount} records but found {actualCount}");
+            
+            // Remove the wildcard asterisk from the expected prefix for validation
+            string prefixToCheck = expectedPrefix.TrimEnd('*');
+            
+            // Verify each row has a family name that starts with the expected prefix
+            for (int i = 0; i < resultRows.Count; i++)
+            {
+                var row = resultRows[i];
+                var rowText = await row.TextContentAsync() ?? "";
+                
+                // Split the row text to find individual cell values
+                var cellTexts = rowText.Split(new char[] { ' ', '\t', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                
+                // Look for a family name that starts with the prefix (case insensitive)
+                bool foundMatchingFamilyName = cellTexts.Any(cell => 
+                    cell.StartsWith(prefixToCheck, StringComparison.OrdinalIgnoreCase) && 
+                    cell.Length > prefixToCheck.Length); // Ensure it's not just the prefix itself
+                
+                Assert.IsTrue(foundMatchingFamilyName, 
+                    $"Row {i + 1} does not contain a family name starting with '{prefixToCheck}'. Row text: {rowText}");
+            }
+            
+            Console.WriteLine($"✅ Verified {actualCount} records all have family names starting with '{prefixToCheck}'");
+        }
+
+        [When(@"I enter ""(.*)"" into the Forename field")]
+        public async Task WhenIEnterIntoTheForenameField(string forename)
+        {
+            // Find the forename input field and enter the wildcard pattern
+            var forenameInput = await _page.QuerySelectorAsync("input[name*='forename'], input[name*='Forename'], input[name*='first'], input[name*='First'], input[id*='forename'], input[id*='Forename']");
+            
+            if (forenameInput == null)
+            {
+                throw new Exception("Could not find Forename input field");
+            }
+            
+            await forenameInput.FillAsync(forename);
+            Console.WriteLine($"✅ Entered '{forename}' in Forename field");
+        }
+
+        [Then(@"I should see (.*) records")]
+        public async Task ThenIShouldSeeRecords(int expectedCount)
+        {
+            // Wait for results table to be visible
+            await _page.WaitForSelectorAsync("table, .results, .search-results", new PageWaitForSelectorOptions { Timeout = 10000 });
+            
+            // Get all result rows (excluding header)
+            var resultRows = await _page.QuerySelectorAllAsync("table tbody tr, .result-row, .search-result");
+            int actualCount = resultRows.Count;
+            
+            Assert.AreEqual(expectedCount, actualCount, 
+                $"Expected {expectedCount} records but found {actualCount}");
+            
+            Console.WriteLine($"✅ Verified {actualCount} records found as expected");
+        }
+
+        [When(@"I enter ""(.*)"" in the Year of Birth field")]
+        public async Task WhenIEnterInTheYearOfBirthField(string yearOfBirth)
+        {
+            // Find the year of birth input field and enter the year
+            var yearInput = await _page.QuerySelectorAsync("input[name*='year'], input[name*='Year'], input[name*='birth'], input[name*='Birth'], input[id*='year'], input[id*='Year'], input[id*='birth'], input[id*='Birth']");
+            
+            if (yearInput == null)
+            {
+                throw new Exception("Could not find Year of Birth input field");
+            }
+            
+            await yearInput.FillAsync(yearOfBirth);
+            Console.WriteLine($"✅ Entered '{yearOfBirth}' in Year of Birth field");
+        }
+
+        [Then(@"I should see (.*) records with IDs (.*)")]
+        public async Task ThenIShouldSeeRecordsWithIDs(int expectedCount, string expectedIDs)
+        {
+            // Wait for results table to be visible
+            await _page.WaitForSelectorAsync("table, .results, .search-results", new PageWaitForSelectorOptions { Timeout = 10000 });
+            
+            // Get all result rows (excluding header)
+            var resultRows = await _page.QuerySelectorAllAsync("table tbody tr, .result-row, .search-result");
+            int actualCount = resultRows.Count;
+            
+            Assert.AreEqual(expectedCount, actualCount, 
+                $"Expected {expectedCount} records but found {actualCount}");
+            
+            // Parse the expected IDs from the string (e.g., "82, 35, 30 and 47")
+            var expectedIDList = expectedIDs
+                .Replace(" and ", ", ")
+                .Split(',')
+                .Select(id => id.Trim())
+                .ToList();
+            
+            // Verify each row contains one of the expected IDs
+            var foundIDs = new List<string>();
+            
+            for (int i = 0; i < resultRows.Count; i++)
+            {
+                var row = resultRows[i];
+                var rowText = await row.TextContentAsync() ?? "";
+                
+                // Look for ID in the first column or at the beginning of the row
+                var cellTexts = rowText.Split(new char[] { ' ', '\t', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                
+                if (cellTexts.Length > 0)
+                {
+                    var firstCell = cellTexts[0].Trim();
+                    foundIDs.Add(firstCell);
+                    
+                    Assert.IsTrue(expectedIDList.Contains(firstCell), 
+                        $"Row {i + 1} has ID '{firstCell}' which is not in expected IDs: {string.Join(", ", expectedIDList)}");
+                }
+            }
+            
+            Console.WriteLine($"✅ Verified {actualCount} records with expected IDs: {string.Join(", ", foundIDs)}");
+        }
     }
 }
