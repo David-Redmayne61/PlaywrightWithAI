@@ -80,6 +80,9 @@ try {
         Write-Host "❌ Some tests failed. Check the output above for details." -ForegroundColor Red
     }
 }
+catch {
+    Write-Host "❌ Error running tests: $_" -ForegroundColor Red
+}
 finally {
     # Return to original directory
     Pop-Location
