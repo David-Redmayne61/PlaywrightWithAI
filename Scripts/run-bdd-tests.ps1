@@ -51,7 +51,7 @@ try {
     }
     else {
         Write-Host "Running BDD/SpecFlow tests only..." -ForegroundColor Yellow
-        dotnet test --filter "FullyQualifiedName~StepDefinitions" --logger:"html;LogFileName=BDDTestsReport.html" --logger:"console;verbosity=normal"
+        dotnet test --filter "FullyQualifiedName~SearchFunctionality" --logger:"html;LogFileName=BDDTestsReport.html" --logger:"console;verbosity=detailed"
     }
 
     # Check results

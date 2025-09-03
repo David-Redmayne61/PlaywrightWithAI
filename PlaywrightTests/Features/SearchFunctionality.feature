@@ -12,3 +12,10 @@ Scenario: Search for a record
     When I view the Search form, I enter "Burch" in the family name
     And then I click Search
     Then I should see a single row of data with Forename "Dorothy", Family Name "Burch", Gender "Female" and Year of Birth "1901"
+
+Scenario: Search for records using wildcards
+    When I view the search form
+    And I click Clear
+    Then I should see a blank search form
+    When I select "Female" from the Gender selector and I click Search
+    Then I should see 45 records all of whom are Gender = Female
