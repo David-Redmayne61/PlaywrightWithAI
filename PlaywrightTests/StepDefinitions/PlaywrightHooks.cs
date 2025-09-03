@@ -22,10 +22,11 @@ namespace PlaywrightTests.StepDefinitions
                 Headless = false,
                 Args = new[] { "--start-maximized" }
             }).GetAwaiter().GetResult();
+            Console.WriteLine("🎬 Browser started - Will be reused across all scenarios");
         }
 
         [BeforeScenario]
-        public void BeforeScenario()
+        public void BeforeScenario(ScenarioContext scenarioContext)
         {
             if (_browser == null)
                 throw new InvalidOperationException("Browser not initialized. Make sure BeforeTestRun has been called.");
@@ -37,11 +38,14 @@ namespace PlaywrightTests.StepDefinitions
             
             _page = _context.NewPageAsync().GetAwaiter().GetResult();
             _page.SetViewportSizeAsync(1920, 1080).GetAwaiter().GetResult();
+            
+            Console.WriteLine($"🥒 Starting scenario: {scenarioContext.ScenarioInfo.Title} - Fresh page context");
         }
 
         [AfterScenario]
-        public void AfterScenario()
+        public void AfterScenario(ScenarioContext scenarioContext)
         {
+            Console.WriteLine($"✅ Scenario completed: {scenarioContext.ScenarioInfo.Title} - Closing page context");
             _page?.CloseAsync().GetAwaiter().GetResult();
             _context?.CloseAsync().GetAwaiter().GetResult();
         }
@@ -49,6 +53,7 @@ namespace PlaywrightTests.StepDefinitions
         [AfterTestRun]
         public static void AfterTestRun()
         {
+            Console.WriteLine("🎬 All tests completed - Closing browser");
             _browser?.CloseAsync().GetAwaiter().GetResult();
             _playwright?.Dispose();
         }

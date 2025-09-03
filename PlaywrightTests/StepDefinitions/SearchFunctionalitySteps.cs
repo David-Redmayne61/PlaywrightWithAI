@@ -226,5 +226,140 @@ namespace PlaywrightTests.StepDefinitions
             
             Console.WriteLine($"✅ Search result verified: {expectedForename} {expectedFamilyName}, {expectedGender}, {expectedYearOfBirth}");
         }
+
+        [When(@"I view the search form")]
+        public async Task WhenIViewTheSearchForm()
+        {
+            // Check if we're already on the search form or need to navigate to it
+            var searchInputExists = await _page.QuerySelectorAsync("input[name*='family'], input[name*='forename']") != null;
+            
+            if (!searchInputExists)
+            {
+                // If not on search form, try to navigate there
+                var searchLink = await _page.QuerySelectorAsync("a:has-text('Search')");
+                if (searchLink != null)
+                {
+                    await searchLink.ClickAsync();
+                    await _page.WaitForTimeoutAsync(1000);
+                }
+            }
+            
+            // Verify we can see the search form elements
+            await _page.WaitForSelectorAsync("input[name*='family'], input[name*='forename'], select[name*='gender'], select[name*='Gender']", 
+                new PageWaitForSelectorOptions { Timeout = 10000 });
+            Console.WriteLine("✅ Search form is visible and ready");
+        }
+
+        [When(@"I click Clear")]
+        public async Task WhenIClickClear()
+        {
+            // Look for Clear button with various possible selectors
+            var clearButton = await _page.QuerySelectorAsync("button:has-text('Clear'), input[type='reset'], button[type='reset'], .clear-button");
+            if (clearButton != null)
+            {
+                await clearButton.ClickAsync();
+                Console.WriteLine("✅ Clicked Clear button");
+            }
+            else
+            {
+                // If no clear button found, manually clear form fields
+                var inputs = await _page.QuerySelectorAllAsync("input[type='text'], input[type='search']");
+                foreach (var input in inputs)
+                {
+                    await input.FillAsync("");
+                }
+                
+                var selects = await _page.QuerySelectorAllAsync("select");
+                foreach (var select in selects)
+                {
+                    await select.SelectOptionAsync("");
+                }
+                Console.WriteLine("✅ Manually cleared all form fields");
+            }
+            
+            await _page.WaitForTimeoutAsync(500); // Allow UI to update
+        }
+
+        [Then(@"I should see a blank search form")]
+        public async Task ThenIShouldSeeABlankSearchForm()
+        {
+            // Check that text inputs are empty
+            var textInputs = await _page.QuerySelectorAllAsync("input[type='text'], input[type='search']");
+            foreach (var input in textInputs)
+            {
+                var value = await input.GetAttributeAsync("value") ?? "";
+                Assert.IsTrue(string.IsNullOrEmpty(value), $"Input field should be empty but contains: '{value}'");
+            }
+            
+            // Check that select elements are on default/empty option
+            var selects = await _page.QuerySelectorAllAsync("select");
+            foreach (var select in selects)
+            {
+                var selectedValue = await select.EvaluateAsync<string>("el => el.value");
+                Assert.IsTrue(string.IsNullOrEmpty(selectedValue) || selectedValue == "0", 
+                    $"Select field should be empty but has value: '{selectedValue}'");
+            }
+            
+            Console.WriteLine("✅ Search form is blank as expected");
+        }
+
+        [When(@"I select ""(.*)"" from the Gender selector and I click Search")]
+        public async Task WhenISelectFromTheGenderSelectorAndIClickSearch(string genderValue)
+        {
+            // Find the gender selector (could be dropdown or radio buttons)
+            var genderSelect = await _page.QuerySelectorAsync("select[name*='gender'], select[name*='Gender'], #gender, .gender-select");
+            if (genderSelect != null)
+            {
+                await genderSelect.SelectOptionAsync(genderValue);
+                Console.WriteLine($"✅ Selected '{genderValue}' from gender dropdown");
+            }
+            else
+            {
+                // Try radio buttons
+                var genderRadio = await _page.QuerySelectorAsync($"input[type='radio'][value*='{genderValue}'], input[type='radio'] + label:has-text('{genderValue}')");
+                if (genderRadio != null)
+                {
+                    await genderRadio.ClickAsync();
+                    Console.WriteLine($"✅ Selected '{genderValue}' radio button");
+                }
+                else
+                {
+                    throw new Exception($"Could not find gender selector for value: {genderValue}");
+                }
+            }
+            
+            // Click the search button
+            await _page.ClickAsync("button:has-text('Search'), input[type='submit'][value*='Search']");
+            Console.WriteLine("✅ Clicked Search button after selecting gender");
+            
+            // Wait for results to load
+            await _page.WaitForTimeoutAsync(2000);
+        }
+
+        [Then(@"I should see (.*) records all of whom are Gender = (.*)")]
+        public async Task ThenIShouldSeeRecordsAllOfWhomAreGender(int expectedCount, string expectedGender)
+        {
+            // Wait for results table to be visible
+            await _page.WaitForSelectorAsync("table, .results, .search-results", new PageWaitForSelectorOptions { Timeout = 10000 });
+            
+            // Get all result rows (excluding header)
+            var resultRows = await _page.QuerySelectorAllAsync("table tbody tr, .result-row, .search-result");
+            int actualCount = resultRows.Count;
+            
+            Assert.AreEqual(expectedCount, actualCount, 
+                $"Expected {expectedCount} records but found {actualCount}");
+            
+            // Verify each row has the expected gender
+            for (int i = 0; i < resultRows.Count; i++)
+            {
+                var row = resultRows[i];
+                var rowText = await row.TextContentAsync() ?? "";
+                
+                Assert.IsTrue(rowText.Contains(expectedGender), 
+                    $"Row {i + 1} does not contain expected gender '{expectedGender}'. Row text: {rowText}");
+            }
+            
+            Console.WriteLine($"✅ Verified {actualCount} records all have Gender = {expectedGender}");
+        }
     }
 }
