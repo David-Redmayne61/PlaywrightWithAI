@@ -46,8 +46,19 @@ namespace PlaywrightTests.StepDefinitions
         public void AfterScenario(ScenarioContext scenarioContext)
         {
             Console.WriteLine($"✅ Scenario completed: {scenarioContext.ScenarioInfo.Title} - Closing page context");
-            _page?.CloseAsync().GetAwaiter().GetResult();
-            _context?.CloseAsync().GetAwaiter().GetResult();
+            
+            try
+            {
+                // Add a small delay to ensure any pending downloads or operations complete
+                System.Threading.Thread.Sleep(1000);
+                
+                _page?.CloseAsync().GetAwaiter().GetResult();
+                _context?.CloseAsync().GetAwaiter().GetResult();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"⚠️ Warning: Error closing page/context: {ex.Message}");
+            }
         }
 
         [AfterTestRun]
