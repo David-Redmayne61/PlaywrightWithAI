@@ -1,0 +1,15 @@
+{
+  "name": "playwright-js-tests",
+  "version": "1.0.0",
+  "description": "Node.js Playwright tests mirroring C# MSTest scenarios.",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx playwright test",
+    "show-report": "npx playwright show-report"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.55.0"
+  }
+}
