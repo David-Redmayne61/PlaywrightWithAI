@@ -1,4 +1,5 @@
 const { test, expect } = require('@playwright/test');
+const { testPerson } = require('./shared-test-data');
 
 test.describe('Person Details and Functionality', () => {
   test('Add Person form fields and submit button', async ({ page }, testInfo) => {
@@ -31,11 +32,9 @@ test.describe('Person Details and Functionality', () => {
       await expect(page.locator('input[name="YearOfBirth"]')).toBeVisible();
       await expect(page.locator('button[type="submit"]:has-text("Submit")')).toBeVisible();
     });
-    const forename = 'John';
-    const familyName = 'Smith';
     await test.step('Enter data into Add Person form fields', async () => {
-      await page.fill('input[name="Forename"]', forename);
-      await page.fill('input[name="FamilyName"]', familyName);
+      await page.fill('input[name="Forename"]', testPerson.forename);
+      await page.fill('input[name="FamilyName"]', testPerson.familyName);
       await page.selectOption('select[name="Gender"]', { label: 'Male' });
       await page.fill('input[name="YearOfBirth"]', '1976');
     });
@@ -45,7 +44,7 @@ test.describe('Person Details and Functionality', () => {
     });
     await test.step('Assert success message for new person', async () => {
       const successMsg = await page.locator('.alert-success, .dashboard-message, [role="alert"]').textContent();
-      expect(successMsg).toMatch(/Record for John Smith added successfully!?/i);
+      expect(successMsg).toMatch(new RegExp(`Record for ${testPerson.fullName} added successfully!?`, 'i'));
       const closeBtn = page.locator('.alert-dismissible.fade.show > button, .dashboard-message .close, [role="alert"] .close');
       await closeBtn.first().waitFor({ state: 'visible', timeout: 10000 });
       await closeBtn.first().click();

@@ -1,4 +1,5 @@
 const { test, expect } = require('@playwright/test');
+const { testPerson } = require('./shared-test-data');
 
 test.describe('Person Duplicate Prevention', () => {
   test('Cannot add duplicate person', async ({ page }, testInfo) => {
@@ -18,10 +19,10 @@ test.describe('Person Duplicate Prevention', () => {
       await page.waitForURL(/AddPerson|Add|Person/i, { timeout: 10000 });
     });
     await test.step('Enter duplicate data into Add Person form fields', async () => {
-      await page.fill('input[name="Forename"]', 'John');
-      await page.fill('input[name="FamilyName"]', 'Smith');
-      await page.selectOption('select[name="Gender"]', { label: 'Male' });
-      await page.fill('input[name="YearOfBirth"]', '1976');
+      await page.fill('input[name="Forename"]', testPerson.forename);
+      await page.fill('input[name="FamilyName"]', testPerson.familyName);
+      await page.selectOption('select[name="Gender"]', { label: testPerson.gender });
+      await page.fill('input[name="YearOfBirth"]', testPerson.yearOfBirth);
     });
     await test.step('Submit Add Person form', async () => {
       await page.click('button[type="submit"]:has-text("Submit")');
@@ -29,7 +30,7 @@ test.describe('Person Duplicate Prevention', () => {
     });
     await test.step('Assert duplicate warning message', async () => {
       const warningMsg = await page.locator('.alert-danger, .dashboard-message, [role="alert"]').textContent();
-      expect(warningMsg).toMatch(/A person with the name John Smith already exists/i);
+      expect(warningMsg).toMatch(new RegExp(`A person with the name ${testPerson.fullName} already exists`, 'i'));
     });
   });
 });

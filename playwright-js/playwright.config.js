@@ -2,6 +2,8 @@
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
   testDir: './tests',
+  workers: 1, // Force sequential execution
+  fullyParallel: false, // Disable parallel execution
   reporter: [['html', { open: 'never' }]],
   use: {
   headless: false,
