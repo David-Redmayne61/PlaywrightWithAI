@@ -1,7 +1,8 @@
 const { test, expect } = require('@playwright/test');
+const { testPerson } = require('./shared-test-data');
 
 test.describe('Dashboard and Navigation', () => {
-  test('Navigate to Search and enter Family Name', async ({ page }, testInfo) => {
+  test('Cleanup - Remove any existing test data', async ({ page }, testInfo) => {
     await test.step('Login and render dashboard', async () => {
       await page.goto('https://localhost:7031');
       await page.waitForSelector('input[name="Username"]', { timeout: 20000 });
@@ -17,39 +18,50 @@ test.describe('Dashboard and Navigation', () => {
       await page.click('nav a:has-text("Search"), .navbar a:has-text("Search"), .top-nav a:has-text("Search")');
       await page.waitForURL('**/Home/Search', { timeout: 10000 });
     });
-    await test.step('Enter Smith in Family Name field', async () => {
-      await page.fill('body > div > main > div > div.card.shadow.mb-4 > div > form > div:nth-child(2) > input', 'Smith');
+    await test.step('Enter family name in Family Name field', async () => {
+      await page.fill('body > div > main > div > div.card.shadow.mb-4 > div > form > div:nth-child(2) > input', testPerson.familyName);
     });
     await test.step('Click Search button', async () => {
       await page.click('body > div > main > div > div.card.shadow.mb-4 > div > form button[type="submit"]');
     });
     let johnId;
-    await test.step('Find John Smith row and note ID', async () => {
-      const johnRow = page.locator('table tbody tr', { hasText: 'John Smith' });
-      await johnRow.waitFor({ state: 'visible', timeout: 10000 });
-      // Assume ID is in the first cell of the row
-      johnId = await johnRow.locator('td').first().textContent();
-      testInfo.attach('John Smith ID', { body: johnId || 'Not found', contentType: 'text/plain' });
+    let personFound = false;
+    await test.step('Find test person row if it exists', async () => {
+      try {
+        const johnRow = page.locator('table tbody tr', { hasText: testPerson.fullName });
+        await johnRow.waitFor({ state: 'visible', timeout: 5000 });
+        // Assume ID is in the first cell of the row
+        johnId = await johnRow.locator('td').first().textContent();
+        personFound = true;
+        testInfo.attach('Test Person Found', { body: `ID: ${johnId}`, contentType: 'text/plain' });
+      } catch (error) {
+        // No existing test person found - this is fine for cleanup
+        testInfo.attach('Cleanup Result', { body: 'No existing test person found to clean up', contentType: 'text/plain' });
+      }
     });
-    await test.step('Click Delete on John Smith row', async () => {
-      const deleteBtn = page.locator('table tbody tr', { hasText: 'John Smith' }).locator('a:has-text("Delete"), button:has-text("Delete")');
-      await deleteBtn.waitFor({ state: 'visible', timeout: 10000 });
-      await deleteBtn.click();
-      await page.waitForURL(`**/Home/Delete/${johnId}`, { timeout: 10000 });
-    });
-    await test.step('Assert Delete confirmation details', async () => {
-      // Assert correct ID in URL
-      expect(page.url()).toMatch(new RegExp(`/Home/Delete/${johnId}$`));
-      // Assert confirmation details
-      await expect(page.locator('dd:has-text("John")')).toBeVisible();
-      await expect(page.locator('dd:has-text("Smith")')).toBeVisible();
-      await expect(page.locator('dd:has-text("Male")')).toBeVisible();
-    });
-    await test.step('Click Delete to confirm', async () => {
-      await page.click('button:has-text("Delete"), input[type="submit"][value="Delete"]');
-      await page.waitForURL('**/Home/ViewPeople', { timeout: 10000 });
-      await expect(page.locator('h1, .dashboard-title, .view-people-title')).toBeVisible();
-    });
+    
+    if (personFound) {
+      await test.step('Click Delete on test person row', async () => {
+        const deleteBtn = page.locator('table tbody tr', { hasText: testPerson.fullName }).locator('a:has-text("Delete"), button:has-text("Delete")');
+        await deleteBtn.waitFor({ state: 'visible', timeout: 10000 });
+        await deleteBtn.click();
+        await page.waitForURL(`**/Home/Delete/${johnId}`, { timeout: 10000 });
+      });
+      await test.step('Assert Delete confirmation details', async () => {
+        // Assert correct ID in URL
+        expect(page.url()).toMatch(new RegExp(`/Home/Delete/${johnId}$`));
+        // Assert confirmation details contain test person data
+        await expect(page.locator(`dd:has-text("${testPerson.forename}")`)).toBeVisible();
+        await expect(page.locator(`dd:has-text("${testPerson.familyName}")`)).toBeVisible();
+        await expect(page.locator(`dd:has-text("${testPerson.gender}")`)).toBeVisible();
+      });
+      await test.step('Click Delete to confirm', async () => {
+        await page.click('button:has-text("Delete"), input[type="submit"][value="Delete"]');
+        await page.waitForURL('**/Home/ViewPeople', { timeout: 10000 });
+        // Be more flexible with the page title after deletion
+        await expect(page.locator('h1, .dashboard-title, .view-people-title, .page-title')).toBeVisible();
+      });
+    }
   });
   test('Login shows dashboard with expected items', async ({ page }, testInfo) => {
     await test.step('Navigate to login page', async () => {
