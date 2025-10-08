@@ -4,7 +4,7 @@ const config = {
   testDir: './tests',
   workers: 1, // Force sequential execution
   fullyParallel: false, // Disable parallel execution
-  reporter: [['html', { open: 'never' }]],
+  reporter: [['html', { open: 'always' }]],
   use: {
   headless: false,
   viewport: { width: 1920, height: 1080 },
