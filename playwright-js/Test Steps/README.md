@@ -16,6 +16,8 @@ This directory contains comprehensive test step documentation for the JavaScript
 | `03-export-final.spec.js` | [Export Final Tests Steps](./03-Export_Final_Tests_Steps.md) | Complete export functionality testing |
 | `04-export-formats.spec.js` | [Export Formats Tests Steps](./04-Export_Formats_Tests_Steps.md) | Multi-format export validation |
 | `05-import-testing.spec.js` | [Import Testing Steps](./05-Import_Testing_Steps.md) | Comprehensive Excel import testing (6 scenarios) |
+| `06-customer-contact.spec.js` | [Customer Contact Tests Steps](./06-Customer_Contact_Tests_Steps.md) | Customer contact creation and form validation (8 scenarios) |
+| `07-customer-contact-records.spec.js` | [Customer Contact Records Tests Steps](./07-Customer_Contact_Records_Tests_Steps.md) | Contact records management and editing workflows (4 scenarios) |
 
 ## Test Documentation Standards
 
@@ -41,6 +43,12 @@ Each test step document follows a consistent structure:
 - Person Creation: Form submission, data validation
 - Duplicate Prevention: Business rule enforcement
 - Import/Export: File handling, data integrity
+- Customer Contact Management: Contact creation, dashboard metrics validation
+
+#### **Workflow Tests**
+- Customer Contact Creation: Complete form workflows with validation
+- Contact Records Management: Navigation, editing, status changes
+- Dashboard Integration: Metrics validation and business impact tracking
 
 #### **Business Logic Tests**
 - Authentication flows

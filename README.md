@@ -33,6 +33,8 @@ npx playwright show-report                            # View HTML report
 - **03-export-final.spec.js**: Data export functionality testing
 - **04-export-formats.spec.js**: Export format validation and download testing
 - **05-import-testing.spec.js**: Comprehensive Excel import testing (6 test scenarios)
+- **06-customer-contact.spec.js**: Customer contact creation and form validation (8 test scenarios)
+- **07-customer-contact-records.spec.js**: Customer contact records management and editing (4 test scenarios)
 
 ### C# Playwright Tests (Reference)
 
@@ -52,6 +54,8 @@ PlaywrightWithAI/
 │   │   ├── 03-export-final.spec.js  # Export functionality
 │   │   ├── 04-export-formats.spec.js # Export formats
 │   │   ├── 05-import-testing.spec.js # Import testing (6 scenarios)
+│   │   ├── 06-customer-contact.spec.js # Customer contact creation (8 tests)
+│   │   ├── 07-customer-contact-records.spec.js # Contact records management (4 tests)
 │   │   └── shared-test-data.js      # Common test utilities
 │   ├── playwright-report/           # HTML test reports
 │   ├── test-results/               # Test execution artifacts
@@ -81,6 +85,8 @@ PlaywrightWithAI/
 - **👤 Person Management**: CRUD operations, form validation, duplicate prevention
 - **📤 Export Testing**: Multiple format support (CSV, Excel), download verification
 - **📥 Import Testing**: Excel file upload, data validation, error handling (6 comprehensive scenarios)
+- **📞 Customer Contact Management**: Contact creation, form validation, dashboard metrics integration (8 creation tests)
+- **📋 Contact Records Management**: Record navigation, editing workflows, status management, dashboard updates (4 management tests)
 - **🔄 Sequential Execution**: Tests run in order to maintain data consistency
 - **📱 Responsive Design**: Tests validate functionality across different viewport sizes
 
