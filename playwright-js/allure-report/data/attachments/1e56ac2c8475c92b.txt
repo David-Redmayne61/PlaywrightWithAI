@@ -1,0 +1,23 @@
+Found Widgets:
+[
+  {
+    "name": "Total Contacts",
+    "value": 11,
+    "pattern": "total.*contact"
+  },
+  {
+    "name": "Today's Contacts",
+    "value": 3,
+    "pattern": "today.*contact"
+  },
+  {
+    "name": "This Week",
+    "value": 3,
+    "pattern": "this.*week"
+  },
+  {
+    "name": "Unique Customers",
+    "value": 7,
+    "pattern": "unique.*customer"
+  }
+]

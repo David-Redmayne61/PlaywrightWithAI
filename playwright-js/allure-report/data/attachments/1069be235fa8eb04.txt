@@ -1,0 +1,8 @@
+Initial Dashboard Metrics:
+{
+  "Total Customer Calls": 14,
+  "Open Customer Calls": 4,
+  "Aged Open Calls": 7,
+  "Pending Customer Calls": 9,
+  "Closed Customer Calls": 1
+}

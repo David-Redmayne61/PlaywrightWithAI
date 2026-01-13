@@ -1,0 +1,51 @@
+Contact List Analysis:
+URL: https://localhost:7031/contact
+
+Contact-specific links found: 0
+
+
+Table structure:
+- Rows in table: 12
+- First row cells: 
+                                                
+                                                    20260113-004
+                                                
+                                             | 
+                                                
+                                                Abbott, Tashya
+                                             | 
+                                                
+                                                13/01/2026 12:09
+                                             | 
+                                                Open
+                                             | 
+                                                
+                                                testcustomer@example.com
+                                             | 
+                                                
+                                                01234 567890
+                                             | 
+                                                
+                                                admin
+                                             | 
+                                                    
+                                                        
+                                                        13/01/26 12:09
+                                                        
+                                                        admin
+                                                    
+                                             | 
+                                                
+                                                    
+                                                        
+                                                    
+                                                        
+                                                            
+                                                        
+                                                    
+                                                        
+                                                    
+                                                
+                                            
+
+FontAwesome icons found: 0

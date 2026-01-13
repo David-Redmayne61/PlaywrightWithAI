@@ -6,14 +6,19 @@ This folder contains PowerShell scripts for various project automation tasks.
 
 ### 🧪 Test Automation
 
-- **`run-tests-with-reports.ps1`** - Playwright test runner with comprehensive reporting
+- **`run-tests-with-reports.ps1`** - C# Playwright test runner with comprehensive reporting
   - Run tests: `.\run-tests-with-reports.ps1`
   - Run without auto-opening report: `.\run-tests-with-reports.ps1 -NoOpen`
 
-  -
+- **`run-playwright-allure.ps1`** - JavaScript Playwright tests with Allure reporting
+  - Run tests and open Allure report: `.\run-playwright-allure.ps1`
+  - Run without auto-opening report: `.\run-playwright-allure.ps1 -NoOpen`
 
-- **`open-latest-report.ps1`** - Quick access to the most recent test report
+- **`open-latest-report.ps1`** - Quick access to the most recent C# test report
   - Open latest report: `.\open-latest-report.ps1`
+
+- **`open-allure-report.ps1`** - Open existing Allure report without running tests
+  - Open Allure report: `.\open-allure-report.ps1`
 
 ### 📄 Documentation Processing
 

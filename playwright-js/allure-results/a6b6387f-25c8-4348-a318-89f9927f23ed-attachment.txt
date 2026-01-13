@@ -1,0 +1,1 @@
+Found Quick Filters section using selector: text=/quick.*filters/i

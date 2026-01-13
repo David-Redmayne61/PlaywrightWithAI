@@ -1,0 +1,1 @@
+Form fields can be cleared successfully

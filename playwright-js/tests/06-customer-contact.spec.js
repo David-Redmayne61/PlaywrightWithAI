@@ -1,14 +1,15 @@
 const { test, expect } = require('@playwright/test');
+const config = require('../config');
 
 test.describe('Customer Contact Recording', () => {
   let contactIds = [];
   
   test.beforeEach(async ({ page }) => {
     // Login before each test
-    await page.goto('https://localhost:7031');
+    await page.goto(config.baseUrl);
     await page.waitForSelector('input[name="Username"]', { timeout: 20000 });
-    await page.fill('input[name="Username"]', 'Admin');
-    await page.fill('input[name="Password"]', 'Admin123!');
+    await page.fill('input[name="Username"]', config.username);
+    await page.fill('input[name="Password"]', config.password);
     await page.click('button[type="submit"]');
     await page.waitForURL('**', { timeout: 20000 });
     await expect(page).not.toHaveURL(/Login/i);
@@ -21,7 +22,7 @@ test.describe('Customer Contact Recording', () => {
       await test.step('Clean up test contact records', async () => {
         for (const contactId of contactIds) {
           try {
-            await page.goto(`https://localhost:7031/contact/delete/${contactId}`);
+            await page.goto(`${config.baseUrl}/contact/delete/${contactId}`);
             await page.waitForSelector('button:has-text("Delete"), input[type="submit"][value="Delete"]', { timeout: 5000 });
             await page.click('button:has-text("Delete"), input[type="submit"][value="Delete"]');
             await page.waitForLoadState('networkidle');
@@ -41,7 +42,7 @@ test.describe('Customer Contact Recording', () => {
     await test.step('Navigate from dashboard to contact form', async () => {
       // Verify we're on dashboard (root URL after login)
       const currentUrl = page.url();
-      const isDashboard = currentUrl === 'https://localhost:7031/' || currentUrl.includes('/dashboard') || currentUrl.includes('/home');
+      const isDashboard = currentUrl === `${config.baseUrl}/` || currentUrl.includes('/dashboard') || currentUrl.includes('/home');
       expect(isDashboard).toBe(true);
       
       // Look for Customer Contact option on dashboard
@@ -99,7 +100,7 @@ test.describe('Customer Contact Recording', () => {
         });
         
         // Try direct navigation if link not found
-        await page.goto('https://localhost:7031/contact/create');
+        await page.goto(config.urls.contactCreate);
         await page.waitForLoadState('networkidle');
       }
     });
@@ -107,7 +108,7 @@ test.describe('Customer Contact Recording', () => {
 
   test('Customer Contact Form Structure and Validation', async ({ page }, testInfo) => {
     await test.step('Navigate to contact form', async () => {
-      await page.goto('https://localhost:7031/contact/create');
+      await page.goto(config.urls.contactCreate);
       await page.waitForLoadState('networkidle');
     });
 
@@ -345,7 +346,7 @@ test.describe('Customer Contact Recording', () => {
     let dashboardMetricsAfter = {};
 
     await test.step('Capture initial dashboard metrics', async () => {
-      await page.goto('https://localhost:7031');
+      await page.goto(config.baseUrl);
       await page.waitForLoadState('networkidle');
       
       // Capture customer call metrics from dashboard widgets
@@ -386,7 +387,7 @@ test.describe('Customer Contact Recording', () => {
     });
 
     await test.step('Navigate to contact form', async () => {
-      await page.goto('https://localhost:7031/contact/create');
+      await page.goto(config.urls.contactCreate);
       await page.waitForLoadState('networkidle');
     });
 
@@ -698,7 +699,7 @@ ${JSON.stringify(formFieldStates, null, 2)}`,
 
     await test.step('Verify dashboard metrics increment', async () => {
       // Navigate back to dashboard to check updated metrics
-      await page.goto('https://localhost:7031');
+      await page.goto(config.baseUrl);
       await page.waitForLoadState('networkidle');
       await page.waitForTimeout(2000); // Allow time for metrics to update
 
@@ -761,7 +762,7 @@ Increments:
 
   test('Contact Form Validation - Required Fields', async ({ page }, testInfo) => {
     await test.step('Navigate to contact form', async () => {
-      await page.goto('https://localhost:7031/contact/create');
+      await page.goto(config.urls.contactCreate);
       await page.waitForLoadState('networkidle');
     });
 
@@ -806,7 +807,7 @@ Increments:
 
   test('Reset Form Functionality', async ({ page }, testInfo) => {
     await test.step('Navigate to contact form', async () => {
-      await page.goto('https://localhost:7031/contact/create');
+      await page.goto(config.urls.contactCreate);
       await page.waitForLoadState('networkidle');
     });
 
@@ -891,7 +892,7 @@ Increments:
 
   test('Back to Customer Calls Navigation', async ({ page }, testInfo) => {
     await test.step('Navigate to contact form', async () => {
-      await page.goto('https://localhost:7031/contact/create');
+      await page.goto(config.urls.contactCreate);
       await page.waitForLoadState('networkidle');
     });
 
@@ -923,7 +924,7 @@ Increments:
   test('Contact History/List View Access', async ({ page }, testInfo) => {
     await test.step('Look for contact history or list view', async () => {
       // Try to find contact list/history from dashboard
-      await page.goto('https://localhost:7031');
+      await page.goto(config.baseUrl);
       await page.waitForLoadState('networkidle');
 
       // Look for contact history/list links
@@ -959,10 +960,10 @@ Increments:
       if (!found) {
         // Try direct navigation to common contact list URLs
         const possibleUrls = [
-          'https://localhost:7031/contact',
-          'https://localhost:7031/contact/list',
-          'https://localhost:7031/contact/index',
-          'https://localhost:7031/contacts'
+          config.urls.contactList,
+          `${config.baseUrl}/contact/list`,
+          `${config.baseUrl}/contact/index`,
+          `${config.baseUrl}/contacts`
         ];
 
         for (const url of possibleUrls) {
@@ -994,7 +995,7 @@ Increments:
 
   test('Validate Default Form Values and Auto-Population', async ({ page }, testInfo) => {
     await test.step('Navigate to contact form and validate defaults', async () => {
-      await page.goto('https://localhost:7031/contact/create');
+      await page.goto(config.urls.contactCreate);
       await page.waitForLoadState('networkidle');
       
       const today = new Date();

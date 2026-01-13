@@ -1,0 +1,1 @@
+Found "Back to Dashboard" button using selector: a:has-text("Back to Dashboard")

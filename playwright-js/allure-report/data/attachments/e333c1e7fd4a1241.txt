@@ -1,0 +1,4 @@
+Pencil Icon Navigation:
+Selector used: i[class*="pencil"]
+Navigated to: https://localhost:7031/Contact/Edit/11
+Edit mode entered: true

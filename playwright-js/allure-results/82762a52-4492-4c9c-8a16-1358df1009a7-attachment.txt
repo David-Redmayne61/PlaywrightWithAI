@@ -1,0 +1,3 @@
+Contact Date: "2026-01-13T09:02:27.567"
+Today's Date: 2026-01-13
+Is Today: true

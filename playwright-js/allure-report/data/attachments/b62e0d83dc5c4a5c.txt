@@ -1,0 +1,6 @@
+✅ Excel: Export option available
+  📁 Excel: Downloads file successfully
+✅ CSV: Export option available
+  📁 CSV: Downloads file successfully
+✅ PDF: Export option available
+  📄 PDF: May display inline or in new tab

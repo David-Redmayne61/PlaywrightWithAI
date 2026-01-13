@@ -1,14 +1,15 @@
 const { test, expect } = require('@playwright/test');
 const { testPerson } = require('./shared-test-data');
+const config = require('../config');
 
 test.describe('Person Duplicate Prevention', () => {
   test('Cannot add duplicate person', async ({ page }, testInfo) => {
     await test.step('Login and render dashboard', async () => {
-      await page.goto('https://localhost:7031');
+      await page.goto(config.baseUrl);
       await page.waitForSelector('input[name="Username"]', { timeout: 20000 });
       await page.waitForSelector('input[name="Password"]', { timeout: 20000 });
-      await page.fill('input[name="Username"]', 'Admin');
-      await page.fill('input[name="Password"]', 'Admin123!');
+      await page.fill('input[name="Username"]', config.username);
+      await page.fill('input[name="Password"]', config.password);
       await page.click('button[type="submit"]');
       await page.waitForURL('**', { timeout: 20000 });
       await expect(page).not.toHaveURL(/Login/i);

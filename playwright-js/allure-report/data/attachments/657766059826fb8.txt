@@ -1,0 +1,2 @@
+Status Value: "0"
+Is Open: false

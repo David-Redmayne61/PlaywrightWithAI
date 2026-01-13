@@ -1,0 +1,2 @@
+Red label selector: .text-danger:has-text("Open")
+Label text: "Open"

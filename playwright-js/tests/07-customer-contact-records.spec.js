@@ -1,14 +1,15 @@
 import { test, expect } from '@playwright/test';
+const config = require('../config');
 
 test.describe('Customer Contact Records Management', () => {
   let contactIds = []; // Track created contact IDs for cleanup
 
   test.beforeEach(async ({ page }) => {
     // Login before each test (copied from working contact creation test)
-    await page.goto('https://localhost:7031');
+    await page.goto(config.baseUrl);
     await page.waitForSelector('input[name="Username"]', { timeout: 20000 });
-    await page.fill('input[name="Username"]', 'Admin');
-    await page.fill('input[name="Password"]', 'Admin123!');
+    await page.fill('input[name="Username"]', config.username);
+    await page.fill('input[name="Password"]', config.password);
     await page.click('button[type="submit"]');
     await page.waitForURL('**', { timeout: 20000 });
     await expect(page).not.toHaveURL(/Login/i);
@@ -93,7 +94,7 @@ test.describe('Customer Contact Records Management', () => {
 
       // If button navigation failed, try direct navigation
       if (!navigationSuccessful) {
-        await page.goto('https://localhost:7031/contact');
+        await page.goto(config.urls.contactList);
         await page.waitForLoadState('networkidle');
         testInfo.attach('Direct Navigation', {
           body: 'Used direct navigation to /contact as View List button was not found',
@@ -338,7 +339,7 @@ test.describe('Customer Contact Records Management', () => {
 
   test('Verify Record Access Methods - Call Number Link, Eye Icon, and Pencil Icon', async ({ page }, testInfo) => {
     await test.step('Navigate to contact list page', async () => {
-      await page.goto('https://localhost:7031/contact');
+      await page.goto(config.urls.contactList);
       await page.waitForLoadState('networkidle');
       
       // Wait for data grid to load
@@ -432,7 +433,7 @@ Success: ${callNumberLinkFound}`,
             
             if (callNumberLinkFound) {
               // Navigate back to list for next test
-              await page.goto('https://localhost:7031/contact');
+              await page.goto(config.urls.contactList);
               await page.waitForLoadState('networkidle');
               break;
             }
@@ -473,7 +474,7 @@ Success: ${callNumberLinkFound}`,
               
               if (callNumberLinkFound) {
                 // Navigate back to list for next test
-                await page.goto('https://localhost:7031/contact');
+                await page.goto(config.urls.contactList);
                 await page.waitForLoadState('networkidle');
                 break;
               }
@@ -526,7 +527,7 @@ Success: ${eyeIconFound}`,
             });
             
             // Navigate back to list for next test
-            await page.goto('https://localhost:7031/contact');
+            await page.goto(config.urls.contactList);
             await page.waitForLoadState('networkidle');
             break;
           }
@@ -607,7 +608,7 @@ All three navigation methods are working correctly!`,
 
   test('Verify Edit Mode - Pencil Icon Navigation and Edit Indicators', async ({ page }, testInfo) => {
     await test.step('Navigate to contact list page', async () => {
-      await page.goto('https://localhost:7031/contact');
+      await page.goto(config.urls.contactList);
       await page.waitForLoadState('networkidle');
       
       // Wait for data grid to load
@@ -791,7 +792,7 @@ Expected dates: ${currentDate} or ${currentDateUS}
 
     await test.step('Navigate to dashboard and capture original metrics', async () => {
       // First capture dashboard metrics
-      await page.goto('https://localhost:7031/');
+      await page.goto(config.baseUrl);
       await page.waitForLoadState('networkidle');
 
       // Capture dashboard metrics before making changes
@@ -826,7 +827,7 @@ Expected dates: ${currentDate} or ${currentDateUS}
     });
 
     await test.step('Navigate to contact list and capture original values', async () => {
-      await page.goto('https://localhost:7031/contact');
+      await page.goto(config.urls.contactList);
       await page.waitForLoadState('networkidle');
       
       // Wait for data grid to load
@@ -1165,7 +1166,7 @@ Updated row data: ${updatedRowText}
 
     await test.step('Navigate back to dashboard and verify metric changes', async () => {
       // Navigate back to main dashboard
-      await page.goto('https://localhost:7031/');
+      await page.goto(config.baseUrl);
       await page.waitForLoadState('networkidle');
       
       // Wait a bit longer for dashboard to refresh with updated data

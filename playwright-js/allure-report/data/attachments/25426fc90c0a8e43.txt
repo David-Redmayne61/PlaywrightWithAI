@@ -1,0 +1,8 @@
+✗ Call Number: NOT FOUND
+✓ Contact Date: "2026-01-13T09:02:56.978"
+  Is Today (2026-01-13): ✓
+✓ Status Dropdown: "0"
+  Is "Open": ✗
+✓ Status Dropdown: "0"
+  Is "Open": ✗
+✓ RED "Open" Label: FOUND (.text-danger:has-text("Open"))

@@ -1,0 +1,21 @@
+Dashboard metrics after changing status from Open to Pending:
+
+BEFORE STATUS CHANGE:
+Total Customer Calls: 14
+Open Customer Calls: 5
+Pending Customer Calls: 8
+
+AFTER STATUS CHANGE:
+Total Customer Calls: 14
+Open Customer Calls: 4
+Pending Customer Calls: 9
+
+EXPECTED CHANGES:
+Total Customer Calls: should remain the same
+Open Customer Calls: should decrease by 1
+Pending Customer Calls: should increase by 1
+
+VALIDATION:
+Open Customer Calls: 5 → 4 (Expected: 4)
+Pending Customer Calls: 8 → 9 (Expected: 9)
+Metrics Valid: true

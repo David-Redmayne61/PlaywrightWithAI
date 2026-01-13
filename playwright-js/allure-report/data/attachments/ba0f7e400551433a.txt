@@ -1,0 +1,4 @@
+Field values after reset:
+Field 1: "20260113-003" (empty: false)
+Field 2: "Test Reset Customer" (empty: false)
+Field 3: "" (empty: true)

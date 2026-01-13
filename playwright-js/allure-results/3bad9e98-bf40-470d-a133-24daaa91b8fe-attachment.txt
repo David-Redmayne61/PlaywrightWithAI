@@ -1,0 +1,5 @@
+Current URL: https://localhost:7031/Contact
+Success message found: true
+Redirected: true
+Error message found: false
+Validation messages: false

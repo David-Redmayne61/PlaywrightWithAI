@@ -1,0 +1,6 @@
+Dashboard metrics before edit:
+{
+  "Total Customer Calls": 14,
+  "Open Customer Calls": 5,
+  "Pending Customer Calls": 8
+}
