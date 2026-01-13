@@ -1,0 +1,1 @@
+Filled customer name using selector: [placeholder*="customer"]

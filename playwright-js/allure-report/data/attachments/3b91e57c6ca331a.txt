@@ -1,0 +1,5 @@
+Comment added to reason field:
+Selector used: iframe[title*="Rich Text"]
+Original content length: 343
+Comment added successfully: true
+New comment: "Waiting to hear back from her"

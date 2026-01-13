@@ -1,0 +1,8 @@
+Call Widget Values Before Navigation:
+{
+  "Total Customer Calls": 11,
+  "Open Customer Calls": 5,
+  "Aged Open Calls": 7,
+  "Pending Customer Calls": 5,
+  "Closed Customer Calls": 1
+}

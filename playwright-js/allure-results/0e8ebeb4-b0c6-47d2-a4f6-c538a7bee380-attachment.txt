@@ -1,0 +1,4 @@
+Update button clicked:
+Selector used: button:has-text("Update Customer Call")
+Navigated to: https://localhost:7031/Contact
+Back to list: true

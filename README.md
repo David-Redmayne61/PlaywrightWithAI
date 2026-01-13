@@ -11,6 +11,10 @@ cd playwright-js
 npx playwright test                                    # Run all JS tests
 npx playwright test tests/05-import-testing.spec.js   # Run import tests only
 npx playwright show-report                            # View HTML report
+
+# Or use the automated script with Allure reporting
+cd ..
+.\Scripts\run-playwright-allure.ps1                   # Run tests and open Allure report
 ```
 
 ### Running C# Tests (Reference Implementation)
@@ -110,6 +114,7 @@ PlaywrightWithAI/
 
 ### JavaScript Test Reports
 
+#### Playwright HTML Reports
 Test reports are automatically generated in `playwright-js/playwright-report/`:
 
 - **Interactive HTML Reports**: Visual test results with expandable steps
@@ -118,11 +123,35 @@ Test reports are automatically generated in `playwright-js/playwright-report/`:
 - **Trace Files**: Detailed execution traces for step-by-step analysis
 - **Execution Timeline**: Performance metrics and timing information
 
+#### Allure Reports
+Enhanced test reporting with Allure framework:
+
+- **Rich Visualizations**: Detailed graphs, charts, and trend analysis
+- **Test History**: Track test execution over time
+- **Screenshots & Attachments**: Embedded test artifacts
+- **Step-by-Step Details**: Granular test step breakdown
+- **Categorization**: Organize tests by suite, severity, and features
+
+**Generate Allure Report:**
+```bash
+# Automated (runs tests and generates report)
+.\Scripts\run-playwright-allure.ps1
+
+# Manual generation
+cd playwright-js
+npx playwright test
+npx allure generate allure-results --clean -o allure-report
+npx allure open allure-report
+
+# Open existing report
+.\Scripts\open-allure-report.ps1
+```
+
 ### Report Access
 
-- **Automatic**: Reports open automatically after test execution
-- **Manual**: Run `npx playwright show-report` in the `playwright-js` directory
-- **Browser**: Reports served at `http://localhost:9323` when opened
+- **Playwright HTML**: Run `npx playwright show-report` (served at `http://localhost:9323`)
+- **Allure Report**: Run `.\Scripts\run-playwright-allure.ps1` or `.\Scripts\open-allure-report.ps1`
+- **C# Reports**: Automatically opened after running `.\Scripts\run-tests-with-reports.ps1`
 
 ### C# Test Reports
 

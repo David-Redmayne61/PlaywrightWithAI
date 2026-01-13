@@ -1,0 +1,1 @@
+Found "Record New Call" button using selector: a:has-text("Record New Call")

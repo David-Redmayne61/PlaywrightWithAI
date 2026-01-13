@@ -1,0 +1,12 @@
+Edit Mode Indicators Check:
+
+✅ Underlined Text: NOT FOUND
+
+
+✅ Editing Message: FOUND
+Message: Editing on 13/01/2026 at 12:30 by admin
+
+✅ Today's Date in Message: CONFIRMED
+Expected dates: 13/01/2026 or 1/13/2026
+
+✅ Admin User in Message: CONFIRMED

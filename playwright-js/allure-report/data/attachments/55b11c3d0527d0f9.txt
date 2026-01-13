@@ -1,0 +1,3 @@
+Validation errors shown: true
+Stayed on form: true
+Current URL: https://localhost:7031/contact/create

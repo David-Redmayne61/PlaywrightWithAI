@@ -1,0 +1,4 @@
+Eye Icon Navigation:
+Selector used: i[class*="eye"]
+Navigated to: https://localhost:7031/Contact/Details/10
+Success: true

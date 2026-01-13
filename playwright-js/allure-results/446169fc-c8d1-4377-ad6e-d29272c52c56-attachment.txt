@@ -1,0 +1,4 @@
+Call Number Click Navigation:
+Selector used: text="20251010-001"
+Navigated to: https://localhost:7031/Contact/Details/7
+Success: true

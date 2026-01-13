@@ -1,14 +1,15 @@
 const { test, expect } = require('@playwright/test');
 const { testPerson } = require('./shared-test-data');
+const config = require('../config');
 
 test.describe('Data Export - Final Working Version', () => {
   
   test.beforeEach(async ({ page }) => {
     // Login
-    await page.goto('https://localhost:7031');
+    await page.goto(config.baseUrl);
     await page.waitForSelector('input[name="Username"]', { timeout: 20000 });
-    await page.fill('input[name="Username"]', 'Admin');
-    await page.fill('input[name="Password"]', 'Admin123!');
+    await page.fill('input[name="Username"]', config.username);
+    await page.fill('input[name="Password"]', config.password);
     await page.click('button[type="submit"]');
     await page.waitForURL('**', { timeout: 20000 });
     

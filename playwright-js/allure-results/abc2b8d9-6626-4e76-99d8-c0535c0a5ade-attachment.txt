@@ -1,0 +1,1 @@
+Found contact link using selector: .card:has-text("Customer") a

@@ -1,0 +1,2 @@
+Status field: select[id*="status"]
+Selected value: "0"
